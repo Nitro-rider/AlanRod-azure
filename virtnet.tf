@@ -40,3 +40,28 @@ resource "azurerm_public_ip" "app_public_ip" {
   depends_on = [ 
     azurerm_resource_group.app_grp ]
 }
+
+resource "azurerm_network_security_group" "app_secgrp" {
+  name                = "app-secgrp"
+  location            = local.location
+  resource_group_name = local.resource_group
+
+  security_rule {
+    name                       = "Allw_http"
+    priority                   = 200
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "subnet_secgrp_ass" {
+  subnet_id                 = azurerm_subnet.SubnetA.id
+  network_security_group_id = azurerm_network_security_group.app_secgrp.id
+  depends_on = [ 
+    azurerm_network_security_group.app_secgrp ]
+}
