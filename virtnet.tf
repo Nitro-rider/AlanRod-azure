@@ -26,7 +26,8 @@ resource "azurerm_network_interface" "app_interface" {
 
   depends_on = [ 
     azurerm_virtual_network.app_network, 
-    azurerm_public_ip.app_public_ip ]
+    azurerm_public_ip.app_public_ip,
+    azurerm_subnet.SubnetA ]
 }
 
 resource "azurerm_public_ip" "app_public_ip" {
