@@ -3,11 +3,13 @@ resource "azurerm_virtual_network" "app_network" {
   location            = local.location
   resource_group_name = azurerm_resource_group.app_grp.name
   address_space       = ["10.0.0.0/16"]
+}
 
-  subnet {
-    name           = "subnetA"
-    address_prefix = "10.0.1.0/24"
-  }
+resource "azurerm_subnet" "SubnetA" {
+  name                 = "SubnetA"
+  resource_group_name  = local.resource_group
+  virtual_network_name = azurerm_virtual_network.app_network.name
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_interface" "app_interface" {
@@ -17,7 +19,7 @@ resource "azurerm_network_interface" "app_interface" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.SubnetA.id
+    subnet_id                     = azurerm_subnet.SubnetA.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id = azurerm_public_ip.app_public_ip.id
   }
