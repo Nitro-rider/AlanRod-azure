@@ -5,6 +5,7 @@ resource "azurerm_windows_virtual_machine" "app_vm" {
   size                = "Standard_D2s_v3"
   admin_username      = "adminuser"
   admin_password      = "P@$$w0rd1234!"
+  availability_set_id = azurerm_availability_set.app_avset0.id
   network_interface_ids = [
     azurerm_network_interface.app_interface.id,
   ]
@@ -22,7 +23,8 @@ resource "azurerm_windows_virtual_machine" "app_vm" {
   }
 
   depends_on = [ 
-    azurerm_network_interface.app_interface
+    azurerm_network_interface.app_interface,
+    azurerm_availability_set.app_avset0
    ]
 }
 
@@ -33,10 +35,6 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1"
-
-  tags = {
-    environment = "staging"
-  }
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "disk_attach" {

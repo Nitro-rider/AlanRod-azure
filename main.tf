@@ -20,12 +20,6 @@ locals {
   location        = "North Europe"
 }
 
-data "azurerm_subnet" "SubnetA" {
-  name = "SubnetA"
-  virtual_network_name = "app-networt"
-  resource_group_name = local.resource_group
-}
-
 resource "azurerm_resource_group" "app_grp" {
     name        = local.resource_group
     location    = local.location
@@ -62,3 +56,10 @@ resource "azurerm_storage_blob" "sample" {
    ]
 }
 
+resource "azurerm_availability_set" "app_avset0" {
+  name                = "app-av-set-0"
+  location            = local.location
+  resource_group_name = local.resource_group
+  platform_fault_domain_count = 3
+  platform_update_domain_count = 3
+}

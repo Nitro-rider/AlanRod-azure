@@ -32,8 +32,4 @@ resource "azurerm_public_ip" "app_public_ip" {
   resource_group_name = local.resource_group
   location            = local.location
   allocation_method   = "Static"
-
-  tags = {
-    environment = "Production"
-  }
 }
