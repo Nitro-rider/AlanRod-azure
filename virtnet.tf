@@ -19,8 +19,21 @@ resource "azurerm_network_interface" "app_interface" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.SubnetA.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.app_public_ip
   }
 
   depends_on = [ 
-    azurerm_virtual_network.app_network ]
+    azurerm_virtual_network.app_network, 
+    azurerm_public_ip.app_public_ip ]
+}
+
+resource "azurerm_public_ip" "app_public_ip" {
+  name                = "app-public-ip"
+  resource_group_name = local.resource_group
+  location            = local.location
+  allocation_method   = "Static"
+
+  tags = {
+    environment = "Production"
+  }
 }
