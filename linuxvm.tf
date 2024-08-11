@@ -4,15 +4,14 @@ resource "azurerm_linux_virtual_machine" "example" {
   location            = local.location
   size                = "Standard_F2"
   admin_username      = "linuxuser"
-  admin_password      = "Azure@123"
-  disable_password_authentication = true
   network_interface_ids = [
     azurerm_virtual_network.app_network.id,
   ]
-
+  
+  
   admin_ssh_key {
-    username   = "adminuser"
-    public_key = file("~/.ssh/id_rsa.pub")
+    username   = "linuxusr"
+    public_key = tls_public_key.linux_key.openssh
   }
 
   os_disk {
@@ -28,8 +27,19 @@ resource "azurerm_linux_virtual_machine" "example" {
   }
 
   depends_on = [
-    azurerm_network_interface.app_interface
+    azurerm_network_interface.app_interface,
+    tls_private_key.linux_key
     ]
+}
+
+resource "tls_private_key" "linux_key" {
+    algorithm = "RSA"
+    rsa_bits = 4096
+}
+
+resource "local_file" "linuxkey" {
+  filename = "linuxkey.pem"
+  content = tls_private_key.linux_key.private_key_pem
 }
 
 resource "azurerm_public_ip" "app_public_ip" {
