@@ -50,3 +50,5 @@ resource "azurerm_public_ip" "app_public_ip" {
   depends_on = [ 
     azurerm_resource_group.app_grp ]
 }
+
+# need to change permissions on the key.pem file to 400
