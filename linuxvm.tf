@@ -4,6 +4,7 @@ resource "azurerm_linux_virtual_machine" "example" {
   location            = local.location
   size                = "Standard_F2"
   admin_username      = "linuxuser"
+  custom_data = data.template_cloudinit_config.linux_config.rendered
   network_interface_ids = [
     azurerm_virtual_network.app_network.id,
   ]
@@ -30,6 +31,16 @@ resource "azurerm_linux_virtual_machine" "example" {
     azurerm_network_interface.app_interface,
     tls_private_key.linux_key
     ]
+}
+
+data "template_cloudinit_config" "linux_config" {
+    gzip = true
+    base64_encode = true
+  
+  part {
+    content_type = "text/cloud-config"
+    content = "package: ['nginx']"
+  }
 }
 
 resource "tls_private_key" "linux_key" {
